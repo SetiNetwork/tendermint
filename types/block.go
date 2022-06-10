@@ -44,6 +44,7 @@ type Block struct {
 	Header     `json:"header"`
 	Data       `json:"data"`
 	Evidence   EvidenceList `json:"evidence"`
+	Work       WorkList `json:"worklist"`
 	LastCommit *Commit      `json:"last_commit"`
 }
 
@@ -103,6 +104,9 @@ func (b *Block) fillHeader() {
 	}
 	if b.EvidenceHash == nil {
 		b.EvidenceHash = b.Evidence.Hash()
+	}
+	if b.WorkHash == nil {
+		b.WorkHash = b.Work.Hash()
 	}
 }
 
@@ -353,6 +357,7 @@ type Header struct {
 	LastResultsHash tmbytes.HexBytes `json:"last_results_hash"`
 
 	// consensus info
+	WorkHash        tmbytes.HexBytes `json:"work_hash"`    // work included in the block
 	EvidenceHash    tmbytes.HexBytes `json:"evidence_hash"`    // evidence included in the block
 	ProposerAddress Address          `json:"proposer_address"` // original proposer of the block
 }
@@ -410,6 +415,10 @@ func (h Header) ValidateBasic() error {
 
 	if err := ValidateHash(h.EvidenceHash); err != nil {
 		return fmt.Errorf("wrong EvidenceHash: %w", err)
+	}
+
+	if err := ValidateHash(h.WorkHash); err != nil {
+		return fmt.Errorf("wrong WorkHash: %w", err)
 	}
 
 	if len(h.ProposerAddress) != crypto.AddressSize {
@@ -478,6 +487,7 @@ func (h *Header) Hash() tmbytes.HexBytes {
 		cdcEncode(h.AppHash),
 		cdcEncode(h.LastResultsHash),
 		cdcEncode(h.EvidenceHash),
+		cdcEncode(h.WorkHash),
 		cdcEncode(h.ProposerAddress),
 	})
 }
@@ -516,6 +526,7 @@ func (h *Header) StringIndented(indent string) string {
 		indent, h.ConsensusHash,
 		indent, h.LastResultsHash,
 		indent, h.EvidenceHash,
+		indent, h.WorkHash,
 		indent, h.ProposerAddress,
 		indent, h.Hash(),
 	)
@@ -539,6 +550,7 @@ func (h *Header) ToProto() *tmproto.Header {
 		AppHash:            h.AppHash,
 		DataHash:           h.DataHash,
 		EvidenceHash:       h.EvidenceHash,
+		WorkHash:           h.WorkHash,
 		LastResultsHash:    h.LastResultsHash,
 		LastCommitHash:     h.LastCommitHash,
 		ProposerAddress:    h.ProposerAddress,
@@ -571,6 +583,7 @@ func HeaderFromProto(ph *tmproto.Header) (Header, error) {
 	h.AppHash = ph.AppHash
 	h.DataHash = ph.DataHash
 	h.EvidenceHash = ph.EvidenceHash
+	h.WorkHash = ph.WorkHash
 	h.LastResultsHash = ph.LastResultsHash
 	h.LastCommitHash = ph.LastCommitHash
 	h.ProposerAddress = ph.ProposerAddress
