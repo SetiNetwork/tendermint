@@ -4,6 +4,7 @@
 package types
 
 import (
+	encoding_binary "encoding/binary"
 	fmt "fmt"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
@@ -29,8 +30,8 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type Work struct {
 	// Types that are valid to be assigned to Sum:
-	//	*Work_DuplicateVoteWork
-	//	*Work_LightClientAttackWork
+	//	*Work_FloatWork
+	//	*Work_StringWork
 	Sum isWork_Sum `protobuf_oneof:"sum"`
 }
 
@@ -73,15 +74,15 @@ type isWork_Sum interface {
 	Size() int
 }
 
-type Work_DuplicateVoteWork struct {
-	DuplicateVoteWork *DuplicateVoteWork `protobuf:"bytes,1,opt,name=duplicate_vote_work,json=duplicateVoteWork,proto3,oneof" json:"duplicate_vote_work,omitempty"`
+type Work_FloatWork struct {
+	FloatWork *FloatWork `protobuf:"bytes,1,opt,name=float_work,json=floatWork,proto3,oneof" json:"float_work,omitempty"`
 }
-type Work_LightClientAttackWork struct {
-	LightClientAttackWork *LightClientAttackWork `protobuf:"bytes,2,opt,name=light_client_attack_work,json=lightClientAttackWork,proto3,oneof" json:"light_client_attack_work,omitempty"`
+type Work_StringWork struct {
+	StringWork *StringWork `protobuf:"bytes,2,opt,name=string_work,json=stringWork,proto3,oneof" json:"string_work,omitempty"`
 }
 
-func (*Work_DuplicateVoteWork) isWork_Sum()     {}
-func (*Work_LightClientAttackWork) isWork_Sum() {}
+func (*Work_FloatWork) isWork_Sum()  {}
+func (*Work_StringWork) isWork_Sum() {}
 
 func (m *Work) GetSum() isWork_Sum {
 	if m != nil {
@@ -90,16 +91,16 @@ func (m *Work) GetSum() isWork_Sum {
 	return nil
 }
 
-func (m *Work) GetDuplicateVoteWork() *DuplicateVoteWork {
-	if x, ok := m.GetSum().(*Work_DuplicateVoteWork); ok {
-		return x.DuplicateVoteWork
+func (m *Work) GetFloatWork() *FloatWork {
+	if x, ok := m.GetSum().(*Work_FloatWork); ok {
+		return x.FloatWork
 	}
 	return nil
 }
 
-func (m *Work) GetLightClientAttackWork() *LightClientAttackWork {
-	if x, ok := m.GetSum().(*Work_LightClientAttackWork); ok {
-		return x.LightClientAttackWork
+func (m *Work) GetStringWork() *StringWork {
+	if x, ok := m.GetSum().(*Work_StringWork); ok {
+		return x.StringWork
 	}
 	return nil
 }
@@ -107,33 +108,33 @@ func (m *Work) GetLightClientAttackWork() *LightClientAttackWork {
 // XXX_OneofWrappers is for the internal use of the proto package.
 func (*Work) XXX_OneofWrappers() []interface{} {
 	return []interface{}{
-		(*Work_DuplicateVoteWork)(nil),
-		(*Work_LightClientAttackWork)(nil),
+		(*Work_FloatWork)(nil),
+		(*Work_StringWork)(nil),
 	}
 }
 
-// DuplicateVoteWork contains work of a validator signed two conflicting
-// votes.
-type DuplicateVoteWork struct {
-	VoteA            *Vote     `protobuf:"bytes,1,opt,name=vote_a,json=voteA,proto3" json:"vote_a,omitempty"`
-	VoteB            *Vote     `protobuf:"bytes,2,opt,name=vote_b,json=voteB,proto3" json:"vote_b,omitempty"`
-	TotalVotingPower int64     `protobuf:"varint,3,opt,name=total_voting_power,json=totalVotingPower,proto3" json:"total_voting_power,omitempty"`
-	ValidatorPower   int64     `protobuf:"varint,4,opt,name=validator_power,json=validatorPower,proto3" json:"validator_power,omitempty"`
-	Timestamp        time.Time `protobuf:"bytes,5,opt,name=timestamp,proto3,stdtime" json:"timestamp"`
+// FloatWork designed for works that are not designed to return a number in
+// response to the problem.
+type FloatWork struct {
+	Db        float64   `protobuf:"fixed64,1,opt,name=db,proto3" json:"db,omitempty"`
+	Location  float64   `protobuf:"fixed64,2,opt,name=location,proto3" json:"location,omitempty"`
+	Lengh     float64   `protobuf:"fixed64,3,opt,name=lengh,proto3" json:"lengh,omitempty"`
+	Solution  float64   `protobuf:"fixed64,4,opt,name=solution,proto3" json:"solution,omitempty"`
+	Timestamp time.Time `protobuf:"bytes,5,opt,name=timestamp,proto3,stdtime" json:"timestamp"`
 }
 
-func (m *DuplicateVoteWork) Reset()         { *m = DuplicateVoteWork{} }
-func (m *DuplicateVoteWork) String() string { return proto.CompactTextString(m) }
-func (*DuplicateVoteWork) ProtoMessage()    {}
-func (*DuplicateVoteWork) Descriptor() ([]byte, []int) {
+func (m *FloatWork) Reset()         { *m = FloatWork{} }
+func (m *FloatWork) String() string { return proto.CompactTextString(m) }
+func (*FloatWork) ProtoMessage()    {}
+func (*FloatWork) Descriptor() ([]byte, []int) {
 	return fileDescriptor_7fa7c0758235f145, []int{1}
 }
-func (m *DuplicateVoteWork) XXX_Unmarshal(b []byte) error {
+func (m *FloatWork) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *DuplicateVoteWork) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *FloatWork) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_DuplicateVoteWork.Marshal(b, m, deterministic)
+		return xxx_messageInfo_FloatWork.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -143,75 +144,75 @@ func (m *DuplicateVoteWork) XXX_Marshal(b []byte, deterministic bool) ([]byte, e
 		return b[:n], nil
 	}
 }
-func (m *DuplicateVoteWork) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DuplicateVoteWork.Merge(m, src)
+func (m *FloatWork) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_FloatWork.Merge(m, src)
 }
-func (m *DuplicateVoteWork) XXX_Size() int {
+func (m *FloatWork) XXX_Size() int {
 	return m.Size()
 }
-func (m *DuplicateVoteWork) XXX_DiscardUnknown() {
-	xxx_messageInfo_DuplicateVoteWork.DiscardUnknown(m)
+func (m *FloatWork) XXX_DiscardUnknown() {
+	xxx_messageInfo_FloatWork.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_DuplicateVoteWork proto.InternalMessageInfo
+var xxx_messageInfo_FloatWork proto.InternalMessageInfo
 
-func (m *DuplicateVoteWork) GetVoteA() *Vote {
+func (m *FloatWork) GetDb() float64 {
 	if m != nil {
-		return m.VoteA
-	}
-	return nil
-}
-
-func (m *DuplicateVoteWork) GetVoteB() *Vote {
-	if m != nil {
-		return m.VoteB
-	}
-	return nil
-}
-
-func (m *DuplicateVoteWork) GetTotalVotingPower() int64 {
-	if m != nil {
-		return m.TotalVotingPower
+		return m.Db
 	}
 	return 0
 }
 
-func (m *DuplicateVoteWork) GetValidatorPower() int64 {
+func (m *FloatWork) GetLocation() float64 {
 	if m != nil {
-		return m.ValidatorPower
+		return m.Location
 	}
 	return 0
 }
 
-func (m *DuplicateVoteWork) GetTimestamp() time.Time {
+func (m *FloatWork) GetLengh() float64 {
+	if m != nil {
+		return m.Lengh
+	}
+	return 0
+}
+
+func (m *FloatWork) GetSolution() float64 {
+	if m != nil {
+		return m.Solution
+	}
+	return 0
+}
+
+func (m *FloatWork) GetTimestamp() time.Time {
 	if m != nil {
 		return m.Timestamp
 	}
 	return time.Time{}
 }
 
-// LightClientAttackWork contains work of a set of validators attempting
-// to mislead a light client.
-type LightClientAttackWork struct {
-	ConflictingBlock    *LightBlock  `protobuf:"bytes,1,opt,name=conflicting_block,json=conflictingBlock,proto3" json:"conflicting_block,omitempty"`
-	CommonHeight        int64        `protobuf:"varint,2,opt,name=common_height,json=commonHeight,proto3" json:"common_height,omitempty"`
-	ByzantineValidators []*Validator `protobuf:"bytes,3,rep,name=byzantine_validators,json=byzantineValidators,proto3" json:"byzantine_validators,omitempty"`
-	TotalVotingPower    int64        `protobuf:"varint,4,opt,name=total_voting_power,json=totalVotingPower,proto3" json:"total_voting_power,omitempty"`
-	Timestamp           time.Time    `protobuf:"bytes,5,opt,name=timestamp,proto3,stdtime" json:"timestamp"`
+// StringWork designed for works that are not designed to return string in
+// response to the problem.
+type StringWork struct {
+	Db        float64   `protobuf:"fixed64,1,opt,name=db,proto3" json:"db,omitempty"`
+	Location  float64   `protobuf:"fixed64,2,opt,name=location,proto3" json:"location,omitempty"`
+	Lengh     float64   `protobuf:"fixed64,3,opt,name=lengh,proto3" json:"lengh,omitempty"`
+	Solution  string    `protobuf:"bytes,4,opt,name=solution,proto3" json:"solution,omitempty"`
+	Timestamp time.Time `protobuf:"bytes,5,opt,name=timestamp,proto3,stdtime" json:"timestamp"`
 }
 
-func (m *LightClientAttackWork) Reset()         { *m = LightClientAttackWork{} }
-func (m *LightClientAttackWork) String() string { return proto.CompactTextString(m) }
-func (*LightClientAttackWork) ProtoMessage()    {}
-func (*LightClientAttackWork) Descriptor() ([]byte, []int) {
+func (m *StringWork) Reset()         { *m = StringWork{} }
+func (m *StringWork) String() string { return proto.CompactTextString(m) }
+func (*StringWork) ProtoMessage()    {}
+func (*StringWork) Descriptor() ([]byte, []int) {
 	return fileDescriptor_7fa7c0758235f145, []int{2}
 }
-func (m *LightClientAttackWork) XXX_Unmarshal(b []byte) error {
+func (m *StringWork) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *LightClientAttackWork) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *StringWork) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_LightClientAttackWork.Marshal(b, m, deterministic)
+		return xxx_messageInfo_StringWork.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -221,47 +222,47 @@ func (m *LightClientAttackWork) XXX_Marshal(b []byte, deterministic bool) ([]byt
 		return b[:n], nil
 	}
 }
-func (m *LightClientAttackWork) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_LightClientAttackWork.Merge(m, src)
+func (m *StringWork) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StringWork.Merge(m, src)
 }
-func (m *LightClientAttackWork) XXX_Size() int {
+func (m *StringWork) XXX_Size() int {
 	return m.Size()
 }
-func (m *LightClientAttackWork) XXX_DiscardUnknown() {
-	xxx_messageInfo_LightClientAttackWork.DiscardUnknown(m)
+func (m *StringWork) XXX_DiscardUnknown() {
+	xxx_messageInfo_StringWork.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_LightClientAttackWork proto.InternalMessageInfo
+var xxx_messageInfo_StringWork proto.InternalMessageInfo
 
-func (m *LightClientAttackWork) GetConflictingBlock() *LightBlock {
+func (m *StringWork) GetDb() float64 {
 	if m != nil {
-		return m.ConflictingBlock
-	}
-	return nil
-}
-
-func (m *LightClientAttackWork) GetCommonHeight() int64 {
-	if m != nil {
-		return m.CommonHeight
+		return m.Db
 	}
 	return 0
 }
 
-func (m *LightClientAttackWork) GetByzantineValidators() []*Validator {
+func (m *StringWork) GetLocation() float64 {
 	if m != nil {
-		return m.ByzantineValidators
-	}
-	return nil
-}
-
-func (m *LightClientAttackWork) GetTotalVotingPower() int64 {
-	if m != nil {
-		return m.TotalVotingPower
+		return m.Location
 	}
 	return 0
 }
 
-func (m *LightClientAttackWork) GetTimestamp() time.Time {
+func (m *StringWork) GetLengh() float64 {
+	if m != nil {
+		return m.Lengh
+	}
+	return 0
+}
+
+func (m *StringWork) GetSolution() string {
+	if m != nil {
+		return m.Solution
+	}
+	return ""
+}
+
+func (m *StringWork) GetTimestamp() time.Time {
 	if m != nil {
 		return m.Timestamp
 	}
@@ -314,48 +315,40 @@ func (m *WorkList) GetWork() []Work {
 
 func init() {
 	proto.RegisterType((*Work)(nil), "tendermint.types.Work")
-	proto.RegisterType((*DuplicateVoteWork)(nil), "tendermint.types.DuplicateVoteWork")
-	proto.RegisterType((*LightClientAttackWork)(nil), "tendermint.types.LightClientAttackWork")
+	proto.RegisterType((*FloatWork)(nil), "tendermint.types.FloatWork")
+	proto.RegisterType((*StringWork)(nil), "tendermint.types.StringWork")
 	proto.RegisterType((*WorkList)(nil), "tendermint.types.WorkList")
 }
 
 func init() { proto.RegisterFile("tendermint/types/work.proto", fileDescriptor_7fa7c0758235f145) }
 
 var fileDescriptor_7fa7c0758235f145 = []byte{
-	// 526 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x94, 0xcd, 0x6e, 0xd3, 0x40,
-	0x14, 0x85, 0xe3, 0x38, 0xa9, 0xca, 0x94, 0x9f, 0x64, 0xda, 0xa2, 0x28, 0xad, 0x9c, 0x28, 0x5d,
-	0x34, 0x0b, 0xb0, 0x51, 0x59, 0xb0, 0x61, 0x53, 0xc3, 0xa2, 0x48, 0x15, 0x02, 0x0b, 0x8a, 0xc4,
-	0xc6, 0xb2, 0x9d, 0xa9, 0x33, 0x8a, 0xed, 0xb1, 0xec, 0x9b, 0x56, 0xe5, 0x19, 0x58, 0xf4, 0xb1,
-	0xc2, 0xae, 0x4b, 0x56, 0x80, 0x92, 0x17, 0x41, 0x73, 0xfd, 0x93, 0x2a, 0x4e, 0x58, 0xb1, 0x89,
-	0x9c, 0x73, 0xbe, 0x7b, 0x7d, 0xe7, 0xcc, 0x8c, 0xc9, 0x01, 0xb0, 0x68, 0xc4, 0x92, 0x90, 0x47,
-	0x60, 0xc0, 0x4d, 0xcc, 0x52, 0xe3, 0x5a, 0x24, 0x13, 0x3d, 0x4e, 0x04, 0x08, 0xda, 0x5a, 0x9a,
-	0x3a, 0x9a, 0xdd, 0x3d, 0x5f, 0xf8, 0x02, 0x4d, 0x43, 0x3e, 0x65, 0x5c, 0xb7, 0xe7, 0x0b, 0xe1,
-	0x07, 0xcc, 0xc0, 0x7f, 0xee, 0xf4, 0xd2, 0x00, 0x1e, 0xb2, 0x14, 0x9c, 0x30, 0xce, 0x81, 0xc3,
-	0xca, 0x5b, 0xf0, 0x37, 0x77, 0xfb, 0x15, 0xf7, 0xca, 0x09, 0xf8, 0xc8, 0x01, 0x91, 0x64, 0xc4,
-	0x60, 0xa6, 0x90, 0xc6, 0x17, 0x91, 0x4c, 0xe8, 0x67, 0xb2, 0x3b, 0x9a, 0xc6, 0x01, 0xf7, 0x1c,
-	0x60, 0xf6, 0x95, 0x00, 0x66, 0xcb, 0x71, 0x3b, 0x4a, 0x5f, 0x19, 0xee, 0x9c, 0x1c, 0xe9, 0xab,
-	0xf3, 0xea, 0x6f, 0x0b, 0xf8, 0x42, 0x00, 0x93, 0x1d, 0xce, 0x6a, 0x56, 0x7b, 0xb4, 0x2a, 0x52,
-	0x97, 0x74, 0x02, 0xee, 0x8f, 0xc1, 0xf6, 0x02, 0xce, 0x22, 0xb0, 0x1d, 0x00, 0xc7, 0x9b, 0x64,
-	0xbd, 0xeb, 0xd8, 0xfb, 0xb8, 0xda, 0xfb, 0x5c, 0x56, 0xbc, 0xc1, 0x82, 0x53, 0xe4, 0xf3, 0xfe,
-	0xfb, 0xc1, 0x3a, 0xc3, 0x6c, 0x12, 0x35, 0x9d, 0x86, 0x83, 0xef, 0x75, 0xd2, 0xae, 0x4c, 0x45,
-	0x9f, 0x93, 0x2d, 0x5c, 0x8d, 0x93, 0x2f, 0xe5, 0x69, 0xf5, 0x75, 0x92, 0xb5, 0x9a, 0x92, 0x3a,
-	0x2d, 0x71, 0x37, 0x9f, 0xee, 0x9f, 0xb8, 0x49, 0x9f, 0x11, 0x0a, 0x02, 0x9c, 0x40, 0x26, 0xc6,
-	0x23, 0xdf, 0x8e, 0xc5, 0x35, 0x4b, 0x3a, 0x6a, 0x5f, 0x19, 0xaa, 0x56, 0x0b, 0x9d, 0x0b, 0x34,
-	0x3e, 0x48, 0x9d, 0x1e, 0x93, 0x27, 0x65, 0xfe, 0x39, 0xda, 0x40, 0xf4, 0x71, 0x29, 0x67, 0xa0,
-	0x49, 0x1e, 0x94, 0x1b, 0xdd, 0x69, 0xe2, 0x20, 0x5d, 0x3d, 0x3b, 0x0a, 0x7a, 0x71, 0x14, 0xf4,
-	0x4f, 0x05, 0x61, 0x6e, 0xcf, 0x7e, 0xf5, 0x6a, 0xb7, 0xbf, 0x7b, 0x8a, 0xb5, 0x2c, 0x1b, 0xfc,
-	0xa8, 0x93, 0xfd, 0xb5, 0x41, 0xd2, 0x77, 0xa4, 0xed, 0x89, 0xe8, 0x32, 0xe0, 0x1e, 0xce, 0xec,
-	0x06, 0xc2, 0x2b, 0x36, 0xfa, 0x70, 0xc3, 0x66, 0x98, 0x92, 0xb1, 0x5a, 0xf7, 0xca, 0x50, 0xa1,
-	0x47, 0xe4, 0x91, 0x27, 0xc2, 0x50, 0x44, 0xf6, 0x98, 0x49, 0x0e, 0x53, 0x53, 0xad, 0x87, 0x99,
-	0x78, 0x86, 0x1a, 0x7d, 0x4f, 0xf6, 0xdc, 0x9b, 0x6f, 0x4e, 0x04, 0x3c, 0x62, 0x76, 0xb9, 0xd2,
-	0xb4, 0xa3, 0xf6, 0xd5, 0xe1, 0xce, 0xc9, 0xc1, 0x9a, 0x84, 0x0b, 0xc6, 0xda, 0x2d, 0x0b, 0x4b,
-	0x2d, 0xdd, 0x10, 0x7a, 0x63, 0x43, 0xe8, 0xff, 0x23, 0xcb, 0xd7, 0x64, 0x5b, 0x26, 0x77, 0xce,
-	0x53, 0xa0, 0x2f, 0x48, 0x23, 0xbf, 0x19, 0xea, 0xfa, 0xf3, 0x81, 0x67, 0xb2, 0x21, 0xdb, 0x58,
-	0x48, 0x9a, 0x1f, 0x67, 0x73, 0x4d, 0xb9, 0x9b, 0x6b, 0xca, 0x9f, 0xb9, 0xa6, 0xdc, 0x2e, 0xb4,
-	0xda, 0xdd, 0x42, 0xab, 0xfd, 0x5c, 0x68, 0xb5, 0xaf, 0xaf, 0x7c, 0x0e, 0xe3, 0xa9, 0xab, 0x7b,
-	0x22, 0x34, 0xee, 0x5f, 0xd5, 0xe5, 0x63, 0xf6, 0x45, 0x58, 0xbd, 0xc6, 0xee, 0x16, 0xea, 0x2f,
-	0xff, 0x06, 0x00, 0x00, 0xff, 0xff, 0x11, 0x64, 0xe6, 0x5b, 0x65, 0x04, 0x00, 0x00,
+	// 393 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x52, 0x4d, 0x6b, 0xab, 0x40,
+	0x14, 0x75, 0x12, 0xf3, 0x88, 0x37, 0xf0, 0x78, 0x0c, 0xe1, 0x11, 0x4c, 0x30, 0x21, 0xab, 0xac,
+	0xc6, 0x47, 0xde, 0xa2, 0x9b, 0x40, 0xc1, 0x45, 0xe9, 0xa2, 0x9b, 0xda, 0x42, 0xa1, 0x9b, 0xa2,
+	0xd1, 0x18, 0x89, 0x3a, 0x41, 0xc7, 0x96, 0xfe, 0x87, 0x2e, 0xf2, 0x47, 0xda, 0xdf, 0x91, 0x65,
+	0x96, 0x5d, 0xb5, 0x25, 0xf9, 0x23, 0xc5, 0x19, 0x3f, 0x4a, 0xdc, 0xb6, 0x1b, 0xb9, 0xc7, 0x73,
+	0x8e, 0xf7, 0x78, 0xef, 0x85, 0x3e, 0x73, 0x23, 0xc7, 0x8d, 0x43, 0x3f, 0x62, 0x3a, 0x7b, 0x5c,
+	0xbb, 0x89, 0xfe, 0x40, 0xe3, 0x15, 0x59, 0xc7, 0x94, 0x51, 0xfc, 0xa7, 0x22, 0x09, 0x27, 0xd5,
+	0xae, 0x47, 0x3d, 0xca, 0x49, 0x3d, 0xab, 0x84, 0x4e, 0x1d, 0x7a, 0x94, 0x7a, 0x81, 0xab, 0x73,
+	0x64, 0xa7, 0x0b, 0x9d, 0xf9, 0xa1, 0x9b, 0x30, 0x2b, 0x5c, 0xe7, 0x82, 0x41, 0xad, 0x0b, 0x7f,
+	0xe6, 0xec, 0xa8, 0xc6, 0xde, 0x5b, 0x81, 0xef, 0x58, 0x8c, 0xc6, 0x42, 0x31, 0x7e, 0x42, 0x20,
+	0xdf, 0xd0, 0x78, 0x85, 0x67, 0x00, 0x8b, 0x80, 0x5a, 0xec, 0x2e, 0x4b, 0xd9, 0x43, 0x23, 0x34,
+	0xe9, 0x4c, 0xfb, 0xe4, 0x38, 0x26, 0x39, 0xcb, 0x34, 0x99, 0xe1, 0x5c, 0x32, 0x95, 0x45, 0x01,
+	0xf0, 0x29, 0x74, 0x12, 0x16, 0xfb, 0x91, 0x27, 0xec, 0x0d, 0x6e, 0x1f, 0xd4, 0xed, 0x57, 0x5c,
+	0x94, 0xfb, 0x21, 0x29, 0x91, 0xd1, 0x82, 0x66, 0x92, 0x86, 0xe3, 0x67, 0x04, 0x4a, 0xd9, 0x02,
+	0xff, 0x86, 0x86, 0x63, 0xf3, 0x2c, 0xc8, 0x6c, 0x38, 0x36, 0x56, 0xa1, 0x1d, 0xd0, 0xb9, 0xc5,
+	0x7c, 0x1a, 0xf1, 0x16, 0xc8, 0x2c, 0x31, 0xee, 0x42, 0x2b, 0x70, 0x23, 0x6f, 0xd9, 0x6b, 0x72,
+	0x42, 0x80, 0xcc, 0x91, 0xd0, 0x20, 0xe5, 0x0e, 0x59, 0x38, 0x0a, 0x8c, 0x0d, 0x50, 0xca, 0x69,
+	0xf6, 0x5a, 0x3c, 0xb1, 0x4a, 0xc4, 0xbc, 0x49, 0x31, 0x6f, 0x72, 0x5d, 0x28, 0x8c, 0xf6, 0xf6,
+	0x6d, 0x28, 0x6d, 0xde, 0x87, 0xc8, 0xac, 0x6c, 0xe3, 0x17, 0x04, 0x50, 0xfd, 0xd3, 0x0f, 0x04,
+	0x56, 0xbe, 0x39, 0xf0, 0x0c, 0xda, 0x59, 0xd2, 0x0b, 0x3f, 0x61, 0xf8, 0x1f, 0xc8, 0xf9, 0xb2,
+	0x9b, 0x93, 0xce, 0xf4, 0x6f, 0x7d, 0x5b, 0x7c, 0x33, 0x72, 0xf6, 0x19, 0x93, 0x2b, 0x8d, 0xcb,
+	0xed, 0x5e, 0x43, 0xbb, 0xbd, 0x86, 0x3e, 0xf6, 0x1a, 0xda, 0x1c, 0x34, 0x69, 0x77, 0xd0, 0xa4,
+	0xd7, 0x83, 0x26, 0xdd, 0x9e, 0x78, 0x3e, 0x5b, 0xa6, 0x36, 0x99, 0xd3, 0x50, 0xff, 0x7a, 0x74,
+	0x55, 0x29, 0x6e, 0xfb, 0xf8, 0x20, 0xed, 0x5f, 0xfc, 0xfd, 0xff, 0xcf, 0x00, 0x00, 0x00, 0xff,
+	0xff, 0x46, 0xbd, 0x16, 0x7f, 0x2f, 0x03, 0x00, 0x00,
 }
 
 func (m *Work) Marshal() (dAtA []byte, err error) {
@@ -390,16 +383,16 @@ func (m *Work) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *Work_DuplicateVoteWork) MarshalTo(dAtA []byte) (int, error) {
+func (m *Work_FloatWork) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *Work_DuplicateVoteWork) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *Work_FloatWork) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
-	if m.DuplicateVoteWork != nil {
+	if m.FloatWork != nil {
 		{
-			size, err := m.DuplicateVoteWork.MarshalToSizedBuffer(dAtA[:i])
+			size, err := m.FloatWork.MarshalToSizedBuffer(dAtA[:i])
 			if err != nil {
 				return 0, err
 			}
@@ -411,16 +404,16 @@ func (m *Work_DuplicateVoteWork) MarshalToSizedBuffer(dAtA []byte) (int, error) 
 	}
 	return len(dAtA) - i, nil
 }
-func (m *Work_LightClientAttackWork) MarshalTo(dAtA []byte) (int, error) {
+func (m *Work_StringWork) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *Work_LightClientAttackWork) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *Work_StringWork) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
-	if m.LightClientAttackWork != nil {
+	if m.StringWork != nil {
 		{
-			size, err := m.LightClientAttackWork.MarshalToSizedBuffer(dAtA[:i])
+			size, err := m.StringWork.MarshalToSizedBuffer(dAtA[:i])
 			if err != nil {
 				return 0, err
 			}
@@ -432,7 +425,7 @@ func (m *Work_LightClientAttackWork) MarshalToSizedBuffer(dAtA []byte) (int, err
 	}
 	return len(dAtA) - i, nil
 }
-func (m *DuplicateVoteWork) Marshal() (dAtA []byte, err error) {
+func (m *FloatWork) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -442,12 +435,12 @@ func (m *DuplicateVoteWork) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *DuplicateVoteWork) MarshalTo(dAtA []byte) (int, error) {
+func (m *FloatWork) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *DuplicateVoteWork) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *FloatWork) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -460,44 +453,34 @@ func (m *DuplicateVoteWork) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i = encodeVarintWork(dAtA, i, uint64(n3))
 	i--
 	dAtA[i] = 0x2a
-	if m.ValidatorPower != 0 {
-		i = encodeVarintWork(dAtA, i, uint64(m.ValidatorPower))
+	if m.Solution != 0 {
+		i -= 8
+		encoding_binary.LittleEndian.PutUint64(dAtA[i:], uint64(math.Float64bits(float64(m.Solution))))
 		i--
-		dAtA[i] = 0x20
+		dAtA[i] = 0x21
 	}
-	if m.TotalVotingPower != 0 {
-		i = encodeVarintWork(dAtA, i, uint64(m.TotalVotingPower))
+	if m.Lengh != 0 {
+		i -= 8
+		encoding_binary.LittleEndian.PutUint64(dAtA[i:], uint64(math.Float64bits(float64(m.Lengh))))
 		i--
-		dAtA[i] = 0x18
+		dAtA[i] = 0x19
 	}
-	if m.VoteB != nil {
-		{
-			size, err := m.VoteB.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintWork(dAtA, i, uint64(size))
-		}
+	if m.Location != 0 {
+		i -= 8
+		encoding_binary.LittleEndian.PutUint64(dAtA[i:], uint64(math.Float64bits(float64(m.Location))))
 		i--
-		dAtA[i] = 0x12
+		dAtA[i] = 0x11
 	}
-	if m.VoteA != nil {
-		{
-			size, err := m.VoteA.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintWork(dAtA, i, uint64(size))
-		}
+	if m.Db != 0 {
+		i -= 8
+		encoding_binary.LittleEndian.PutUint64(dAtA[i:], uint64(math.Float64bits(float64(m.Db))))
 		i--
-		dAtA[i] = 0xa
+		dAtA[i] = 0x9
 	}
 	return len(dAtA) - i, nil
 }
 
-func (m *LightClientAttackWork) Marshal() (dAtA []byte, err error) {
+func (m *StringWork) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -507,59 +490,48 @@ func (m *LightClientAttackWork) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *LightClientAttackWork) MarshalTo(dAtA []byte) (int, error) {
+func (m *StringWork) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *LightClientAttackWork) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *StringWork) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	n6, err6 := github_com_gogo_protobuf_types.StdTimeMarshalTo(m.Timestamp, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdTime(m.Timestamp):])
-	if err6 != nil {
-		return 0, err6
+	n4, err4 := github_com_gogo_protobuf_types.StdTimeMarshalTo(m.Timestamp, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdTime(m.Timestamp):])
+	if err4 != nil {
+		return 0, err4
 	}
-	i -= n6
-	i = encodeVarintWork(dAtA, i, uint64(n6))
+	i -= n4
+	i = encodeVarintWork(dAtA, i, uint64(n4))
 	i--
 	dAtA[i] = 0x2a
-	if m.TotalVotingPower != 0 {
-		i = encodeVarintWork(dAtA, i, uint64(m.TotalVotingPower))
+	if len(m.Solution) > 0 {
+		i -= len(m.Solution)
+		copy(dAtA[i:], m.Solution)
+		i = encodeVarintWork(dAtA, i, uint64(len(m.Solution)))
 		i--
-		dAtA[i] = 0x20
+		dAtA[i] = 0x22
 	}
-	if len(m.ByzantineValidators) > 0 {
-		for iNdEx := len(m.ByzantineValidators) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.ByzantineValidators[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintWork(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0x1a
-		}
-	}
-	if m.CommonHeight != 0 {
-		i = encodeVarintWork(dAtA, i, uint64(m.CommonHeight))
+	if m.Lengh != 0 {
+		i -= 8
+		encoding_binary.LittleEndian.PutUint64(dAtA[i:], uint64(math.Float64bits(float64(m.Lengh))))
 		i--
-		dAtA[i] = 0x10
+		dAtA[i] = 0x19
 	}
-	if m.ConflictingBlock != nil {
-		{
-			size, err := m.ConflictingBlock.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintWork(dAtA, i, uint64(size))
-		}
+	if m.Location != 0 {
+		i -= 8
+		encoding_binary.LittleEndian.PutUint64(dAtA[i:], uint64(math.Float64bits(float64(m.Location))))
 		i--
-		dAtA[i] = 0xa
+		dAtA[i] = 0x11
+	}
+	if m.Db != 0 {
+		i -= 8
+		encoding_binary.LittleEndian.PutUint64(dAtA[i:], uint64(math.Float64bits(float64(m.Db))))
+		i--
+		dAtA[i] = 0x9
 	}
 	return len(dAtA) - i, nil
 }
@@ -624,76 +596,71 @@ func (m *Work) Size() (n int) {
 	return n
 }
 
-func (m *Work_DuplicateVoteWork) Size() (n int) {
+func (m *Work_FloatWork) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	if m.DuplicateVoteWork != nil {
-		l = m.DuplicateVoteWork.Size()
+	if m.FloatWork != nil {
+		l = m.FloatWork.Size()
 		n += 1 + l + sovWork(uint64(l))
 	}
 	return n
 }
-func (m *Work_LightClientAttackWork) Size() (n int) {
+func (m *Work_StringWork) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	if m.LightClientAttackWork != nil {
-		l = m.LightClientAttackWork.Size()
+	if m.StringWork != nil {
+		l = m.StringWork.Size()
 		n += 1 + l + sovWork(uint64(l))
 	}
 	return n
 }
-func (m *DuplicateVoteWork) Size() (n int) {
+func (m *FloatWork) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	if m.VoteA != nil {
-		l = m.VoteA.Size()
-		n += 1 + l + sovWork(uint64(l))
+	if m.Db != 0 {
+		n += 9
 	}
-	if m.VoteB != nil {
-		l = m.VoteB.Size()
-		n += 1 + l + sovWork(uint64(l))
+	if m.Location != 0 {
+		n += 9
 	}
-	if m.TotalVotingPower != 0 {
-		n += 1 + sovWork(uint64(m.TotalVotingPower))
+	if m.Lengh != 0 {
+		n += 9
 	}
-	if m.ValidatorPower != 0 {
-		n += 1 + sovWork(uint64(m.ValidatorPower))
+	if m.Solution != 0 {
+		n += 9
 	}
 	l = github_com_gogo_protobuf_types.SizeOfStdTime(m.Timestamp)
 	n += 1 + l + sovWork(uint64(l))
 	return n
 }
 
-func (m *LightClientAttackWork) Size() (n int) {
+func (m *StringWork) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	if m.ConflictingBlock != nil {
-		l = m.ConflictingBlock.Size()
+	if m.Db != 0 {
+		n += 9
+	}
+	if m.Location != 0 {
+		n += 9
+	}
+	if m.Lengh != 0 {
+		n += 9
+	}
+	l = len(m.Solution)
+	if l > 0 {
 		n += 1 + l + sovWork(uint64(l))
-	}
-	if m.CommonHeight != 0 {
-		n += 1 + sovWork(uint64(m.CommonHeight))
-	}
-	if len(m.ByzantineValidators) > 0 {
-		for _, e := range m.ByzantineValidators {
-			l = e.Size()
-			n += 1 + l + sovWork(uint64(l))
-		}
-	}
-	if m.TotalVotingPower != 0 {
-		n += 1 + sovWork(uint64(m.TotalVotingPower))
 	}
 	l = github_com_gogo_protobuf_types.SizeOfStdTime(m.Timestamp)
 	n += 1 + l + sovWork(uint64(l))
@@ -752,7 +719,7 @@ func (m *Work) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field DuplicateVoteWork", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field FloatWork", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -779,15 +746,15 @@ func (m *Work) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			v := &DuplicateVoteWork{}
+			v := &FloatWork{}
 			if err := v.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
-			m.Sum = &Work_DuplicateVoteWork{v}
+			m.Sum = &Work_FloatWork{v}
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field LightClientAttackWork", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field StringWork", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -814,11 +781,11 @@ func (m *Work) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			v := &LightClientAttackWork{}
+			v := &StringWork{}
 			if err := v.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
-			m.Sum = &Work_LightClientAttackWork{v}
+			m.Sum = &Work_StringWork{v}
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -841,7 +808,7 @@ func (m *Work) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *DuplicateVoteWork) Unmarshal(dAtA []byte) error {
+func (m *FloatWork) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -864,122 +831,56 @@ func (m *DuplicateVoteWork) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: DuplicateVoteWork: wiretype end group for non-group")
+			return fmt.Errorf("proto: FloatWork: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: DuplicateVoteWork: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: FloatWork: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field VoteA", wireType)
+			if wireType != 1 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Db", wireType)
 			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWork
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthWork
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthWork
-			}
-			if postIndex > l {
+			var v uint64
+			if (iNdEx + 8) > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.VoteA == nil {
-				m.VoteA = &Vote{}
-			}
-			if err := m.VoteA.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
+			v = uint64(encoding_binary.LittleEndian.Uint64(dAtA[iNdEx:]))
+			iNdEx += 8
+			m.Db = float64(math.Float64frombits(v))
 		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field VoteB", wireType)
+			if wireType != 1 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Location", wireType)
 			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWork
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthWork
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthWork
-			}
-			if postIndex > l {
+			var v uint64
+			if (iNdEx + 8) > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.VoteB == nil {
-				m.VoteB = &Vote{}
-			}
-			if err := m.VoteB.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
+			v = uint64(encoding_binary.LittleEndian.Uint64(dAtA[iNdEx:]))
+			iNdEx += 8
+			m.Location = float64(math.Float64frombits(v))
 		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field TotalVotingPower", wireType)
+			if wireType != 1 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Lengh", wireType)
 			}
-			m.TotalVotingPower = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWork
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.TotalVotingPower |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
+			var v uint64
+			if (iNdEx + 8) > l {
+				return io.ErrUnexpectedEOF
 			}
+			v = uint64(encoding_binary.LittleEndian.Uint64(dAtA[iNdEx:]))
+			iNdEx += 8
+			m.Lengh = float64(math.Float64frombits(v))
 		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ValidatorPower", wireType)
+			if wireType != 1 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Solution", wireType)
 			}
-			m.ValidatorPower = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWork
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.ValidatorPower |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
+			var v uint64
+			if (iNdEx + 8) > l {
+				return io.ErrUnexpectedEOF
 			}
+			v = uint64(encoding_binary.LittleEndian.Uint64(dAtA[iNdEx:]))
+			iNdEx += 8
+			m.Solution = float64(math.Float64frombits(v))
 		case 5:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Timestamp", wireType)
@@ -1034,7 +935,7 @@ func (m *DuplicateVoteWork) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *LightClientAttackWork) Unmarshal(dAtA []byte) error {
+func (m *StringWork) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1057,72 +958,50 @@ func (m *LightClientAttackWork) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: LightClientAttackWork: wiretype end group for non-group")
+			return fmt.Errorf("proto: StringWork: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: LightClientAttackWork: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: StringWork: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ConflictingBlock", wireType)
+			if wireType != 1 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Db", wireType)
 			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWork
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthWork
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthWork
-			}
-			if postIndex > l {
+			var v uint64
+			if (iNdEx + 8) > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.ConflictingBlock == nil {
-				m.ConflictingBlock = &LightBlock{}
-			}
-			if err := m.ConflictingBlock.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
+			v = uint64(encoding_binary.LittleEndian.Uint64(dAtA[iNdEx:]))
+			iNdEx += 8
+			m.Db = float64(math.Float64frombits(v))
 		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field CommonHeight", wireType)
+			if wireType != 1 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Location", wireType)
 			}
-			m.CommonHeight = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWork
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.CommonHeight |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
+			var v uint64
+			if (iNdEx + 8) > l {
+				return io.ErrUnexpectedEOF
 			}
+			v = uint64(encoding_binary.LittleEndian.Uint64(dAtA[iNdEx:]))
+			iNdEx += 8
+			m.Location = float64(math.Float64frombits(v))
 		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ByzantineValidators", wireType)
+			if wireType != 1 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Lengh", wireType)
 			}
-			var msglen int
+			var v uint64
+			if (iNdEx + 8) > l {
+				return io.ErrUnexpectedEOF
+			}
+			v = uint64(encoding_binary.LittleEndian.Uint64(dAtA[iNdEx:]))
+			iNdEx += 8
+			m.Lengh = float64(math.Float64frombits(v))
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Solution", wireType)
+			}
+			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowWork
@@ -1132,45 +1011,24 @@ func (m *LightClientAttackWork) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= int(b&0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if msglen < 0 {
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
 				return ErrInvalidLengthWork
 			}
-			postIndex := iNdEx + msglen
+			postIndex := iNdEx + intStringLen
 			if postIndex < 0 {
 				return ErrInvalidLengthWork
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ByzantineValidators = append(m.ByzantineValidators, &Validator{})
-			if err := m.ByzantineValidators[len(m.ByzantineValidators)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
+			m.Solution = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field TotalVotingPower", wireType)
-			}
-			m.TotalVotingPower = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWork
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.TotalVotingPower |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
 		case 5:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Timestamp", wireType)

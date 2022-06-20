@@ -10,32 +10,33 @@ import "tendermint/types/validator.proto";
 
 message Work {
   oneof sum {
-    DuplicateVoteWork     duplicate_vote_work      = 1;
-    LightClientAttackWork light_client_attack_work = 2;
+    FloatWork     float_work  = 1;
+    StringWork    string_work = 2;
   }
 }
 
-// DuplicateVoteWork contains work of a validator signed two conflicting
-// votes.
-message DuplicateVoteWork {
-  tendermint.types.Vote     vote_a             = 1;
-  tendermint.types.Vote     vote_b             = 2;
-  int64                     total_voting_power = 3;
-  int64                     validator_power    = 4;
+// FloatWork designed for works that are not designed to return a number in
+// response to the problem.
+message FloatWork {
+  double     db       = 1;
+  double     location = 2;
+  double     lengh    = 3;
+  double     solution = 4;
   google.protobuf.Timestamp timestamp          = 5
       [(gogoproto.nullable) = false, (gogoproto.stdtime) = true];
 }
 
-// LightClientAttackWork contains work of a set of validators attempting
-// to mislead a light client.
-message LightClientAttackWork {
-  tendermint.types.LightBlock conflicting_block            = 1;
-  int64                       common_height                = 2;
-  repeated tendermint.types.Validator byzantine_validators = 3;
-  int64                               total_voting_power   = 4;
-  google.protobuf.Timestamp           timestamp            = 5
+// StringWork designed for works that are not designed to return string in
+// response to the problem.
+message StringWork {
+  double     db       = 1;
+  double     location = 2;
+  double     lengh    = 3;
+  string     solution = 4;
+  google.protobuf.Timestamp timestamp          = 5
       [(gogoproto.nullable) = false, (gogoproto.stdtime) = true];
 }
+
 
 message WorkList {
   repeated Work work = 1 [(gogoproto.nullable) = false];
