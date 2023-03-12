@@ -31,8 +31,16 @@ func (pq priorityQueue) get(i int) *pqEnvelope { return pq[i] }
 func (pq priorityQueue) Len() int              { return len(pq) }
 
 func (pq priorityQueue) Less(i, j int) bool {
-	// if both elements have the same priority, prioritize based on most recent
+	// if both elements have the same priority, prioritize based
+	// on most recent and largest
 	if pq[i].priority == pq[j].priority {
+		diff := pq[i].timestamp.Sub(pq[j].timestamp)
+		if diff < 0 {
+			diff *= -1
+		}
+		if diff < 10*time.Millisecond {
+			return pq[i].size > pq[j].size
+		}
 		return pq[i].timestamp.After(pq[j].timestamp)
 	}
 
@@ -200,13 +208,11 @@ func (s *pqScheduler) process(ctx context.Context) {
 							} else {
 								pqEnvTmpChIDStr := strconv.Itoa(int(pqEnvTmp.envelope.ChannelID))
 								s.metrics.PeerQueueDroppedMsgs.With("ch_id", pqEnvTmpChIDStr).Add(1)
-								s.logger.Debug(
-									"dropped envelope",
+								s.logger.Debug("dropped envelope",
 									"ch_id", pqEnvTmpChIDStr,
 									"priority", pqEnvTmp.priority,
 									"msg_size", pqEnvTmp.size,
-									"capacity", s.capacity,
-								)
+									"capacity", s.capacity)
 
 								s.metrics.PeerPendingSendBytes.With("peer_id", string(pqEnvTmp.envelope.To)).Add(float64(-pqEnvTmp.size))
 
@@ -230,13 +236,11 @@ func (s *pqScheduler) process(ctx context.Context) {
 					// There is not sufficient capacity to drop lower priority Envelopes,
 					// so we drop the incoming Envelope.
 					s.metrics.PeerQueueDroppedMsgs.With("ch_id", chIDStr).Add(1)
-					s.logger.Debug(
-						"dropped envelope",
+					s.logger.Debug("dropped envelope",
 						"ch_id", chIDStr,
 						"priority", pqEnv.priority,
 						"msg_size", pqEnv.size,
-						"capacity", s.capacity,
-					)
+						"capacity", s.capacity)
 				}
 			}
 
@@ -272,12 +276,10 @@ func (s *pqScheduler) process(ctx context.Context) {
 }
 
 func (s *pqScheduler) push(pqEnv *pqEnvelope) {
-	chIDStr := strconv.Itoa(int(pqEnv.envelope.ChannelID))
-
 	// enqueue the incoming Envelope
 	heap.Push(s.pq, pqEnv)
 	s.size += pqEnv.size
-	s.metrics.PeerQueueMsgSize.With("ch_id", chIDStr).Add(float64(pqEnv.size))
+	s.metrics.PeerQueueMsgSize.With("ch_id", strconv.Itoa(int(pqEnv.envelope.ChannelID))).Add(float64(pqEnv.size))
 
 	// Update the cumulative sizes by adding the Envelope's size to every
 	// priority less than or equal to it.

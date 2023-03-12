@@ -40,22 +40,22 @@ type reactorTestSuite struct {
 	conn          *clientmocks.Client
 	stateProvider *mocks.StateProvider
 
-	snapshotChannel   *p2p.Channel
+	snapshotChannel   p2p.Channel
 	snapshotInCh      chan p2p.Envelope
 	snapshotOutCh     chan p2p.Envelope
 	snapshotPeerErrCh chan p2p.PeerError
 
-	chunkChannel   *p2p.Channel
+	chunkChannel   p2p.Channel
 	chunkInCh      chan p2p.Envelope
 	chunkOutCh     chan p2p.Envelope
 	chunkPeerErrCh chan p2p.PeerError
 
-	blockChannel   *p2p.Channel
+	blockChannel   p2p.Channel
 	blockInCh      chan p2p.Envelope
 	blockOutCh     chan p2p.Envelope
 	blockPeerErrCh chan p2p.PeerError
 
-	paramsChannel   *p2p.Channel
+	paramsChannel   p2p.Channel
 	paramsInCh      chan p2p.Envelope
 	paramsOutCh     chan p2p.Envelope
 	paramsPeerErrCh chan p2p.PeerError
@@ -102,6 +102,7 @@ func setup(
 
 	rts.snapshotChannel = p2p.NewChannel(
 		SnapshotChannel,
+		"snapshot",
 		rts.snapshotInCh,
 		rts.snapshotOutCh,
 		rts.snapshotPeerErrCh,
@@ -109,6 +110,7 @@ func setup(
 
 	rts.chunkChannel = p2p.NewChannel(
 		ChunkChannel,
+		"chunk",
 		rts.chunkInCh,
 		rts.chunkOutCh,
 		rts.chunkPeerErrCh,
@@ -116,6 +118,7 @@ func setup(
 
 	rts.blockChannel = p2p.NewChannel(
 		LightBlockChannel,
+		"lightblock",
 		rts.blockInCh,
 		rts.blockOutCh,
 		rts.blockPeerErrCh,
@@ -123,6 +126,7 @@ func setup(
 
 	rts.paramsChannel = p2p.NewChannel(
 		ParamsChannel,
+		"params",
 		rts.paramsInCh,
 		rts.paramsOutCh,
 		rts.paramsPeerErrCh,
@@ -133,7 +137,7 @@ func setup(
 
 	cfg := config.DefaultStateSyncConfig()
 
-	chCreator := func(ctx context.Context, desc *p2p.ChannelDescriptor) (*p2p.Channel, error) {
+	chCreator := func(ctx context.Context, desc *p2p.ChannelDescriptor) (p2p.Channel, error) {
 		switch desc.ID {
 		case SnapshotChannel:
 			return rts.snapshotChannel, nil
@@ -193,6 +197,10 @@ func setup(
 }
 
 func TestReactor_Sync(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode")
+	}
+
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
 	defer cancel()
 
@@ -614,6 +622,10 @@ func TestReactor_StateProviderP2P(t *testing.T) {
 }
 
 func TestReactor_Backfill(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode")
+	}
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -622,6 +634,10 @@ func TestReactor_Backfill(t *testing.T) {
 	for _, failureRate := range failureRates {
 		failureRate := failureRate
 		t.Run(fmt.Sprintf("failure rate: %d", failureRate), func(t *testing.T) {
+			if testing.Short() && failureRate > 0 {
+				t.Skip("skipping test in short mode")
+			}
+
 			ctx, cancel := context.WithCancel(ctx)
 			defer cancel()
 

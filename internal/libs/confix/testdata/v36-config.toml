@@ -157,7 +157,7 @@ experimental-disable-websocket = false
 # the latest (up to EventLogMaxItems) will be available for subscribers to
 # fetch via the /events method.  If 0 (the default) the event log and the
 # /events RPC method are disabled.
-event-log-window-size = "0s"
+event-log-window-size = "30s"
 
 # The maxiumum number of events that may be retained by the event log.  If
 # this value is 0, no upper limit is set. Otherwise, items in excess of
@@ -208,8 +208,10 @@ pprof-laddr = ""
 #######################################################
 [p2p]
 
-# Select the p2p internal queue
-queue-type = "priority"
+# Select the p2p internal queue.
+# Options are: "fifo", "simple-priority", and "priority",
+# with the default being "priority".
+queue-type = "simple-priority"
 
 # Address to listen for incoming connections
 laddr = "tcp://0.0.0.0:26656"
@@ -220,13 +222,6 @@ laddr = "tcp://0.0.0.0:26656"
 # to figure out the address. ip and port are required
 # example: 159.89.10.97:26656
 external-address = ""
-
-# Comma separated list of seed nodes to connect to
-# We only use these if we can’t connect to peers in the addrbook
-# NOTE: not used by the new PEX reactor. Please use BootstrapPeers instead.
-# TODO: Remove once p2p refactor is complete
-# ref: https:#github.com/tendermint/tendermint/issues/5670
-seeds = ""
 
 # Comma separated list of peers to be added to the peer store
 # on startup. Either BootstrapPeers or PersistentPeers are
@@ -241,6 +236,10 @@ upnp = false
 
 # Maximum number of connections (inbound and outbound).
 max-connections = 64
+
+# Maximum number of connections reserved for outgoing
+# connections. Must be less than max-connections
+max-outgoing-connections = 12
 
 # Rate limits the number of incoming connection attempts per IP address.
 max-incoming-connection-attempts = 100

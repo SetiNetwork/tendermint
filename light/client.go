@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	tmstrings "github.com/tendermint/tendermint/internal/libs/strings"
 	"github.com/tendermint/tendermint/libs/log"
 	tmmath "github.com/tendermint/tendermint/libs/math"
 	"github.com/tendermint/tendermint/light/provider"
@@ -475,7 +476,8 @@ func (c *Client) VerifyHeader(ctx context.Context, newHeader *types.Header, now 
 			return fmt.Errorf("existing trusted header %X does not match newHeader %X", l.Hash(), newHeader.Hash())
 		}
 		c.logger.Debug("header has already been verified",
-			"height", newHeader.Height, "hash", newHeader.Hash())
+			"height", newHeader.Height,
+			"hash", tmstrings.LazyBlockHash(newHeader))
 		return nil
 	}
 
@@ -576,7 +578,7 @@ func (c *Client) verifySequential(
 		// 2) Verify them
 		c.logger.Debug("verify adjacent newLightBlock against verifiedBlock",
 			"trustedHeight", verifiedBlock.Height,
-			"trustedHash", verifiedBlock.Hash(),
+			"trustedHash", tmstrings.LazyBlockHash(verifiedBlock),
 			"newHeight", interimBlock.Height,
 			"newHash", interimBlock.Hash())
 
@@ -663,9 +665,9 @@ func (c *Client) verifySkipping(
 	for {
 		c.logger.Debug("verify non-adjacent newHeader against verifiedBlock",
 			"trustedHeight", verifiedBlock.Height,
-			"trustedHash", verifiedBlock.Hash(),
+			"trustedHash", tmstrings.LazyBlockHash(verifiedBlock),
 			"newHeight", blockCache[depth].Height,
-			"newHash", blockCache[depth].Hash())
+			"newHash", tmstrings.LazyBlockHash(blockCache[depth]))
 
 		// Verify the untrusted header. This function is equivalent to
 		// ValidAndVerified in the spec
@@ -897,9 +899,9 @@ func (c *Client) backwards(
 		interimHeader = interimBlock.Header
 		c.logger.Debug("verify newHeader against verifiedHeader",
 			"trustedHeight", verifiedHeader.Height,
-			"trustedHash", verifiedHeader.Hash(),
+			"trustedHash", tmstrings.LazyBlockHash(verifiedHeader),
 			"newHeight", interimHeader.Height,
-			"newHash", interimHeader.Hash())
+			"newHash", tmstrings.LazyBlockHash(interimHeader))
 		if err := VerifyBackwards(interimHeader, verifiedHeader); err != nil {
 			// verification has failed
 			c.logger.Info("backwards verification failed, replacing primary...", "err", err, "primary", c.primary)
@@ -1034,7 +1036,12 @@ func (c *Client) findNewPrimary(ctx context.Context, height int64, remove bool) 
 
 	// process all the responses as they come in
 	for i := 0; i < cap(witnessResponsesC); i++ {
-		response := <-witnessResponsesC
+		var response witnessResponse
+		select {
+		case response = <-witnessResponsesC:
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		}
 		switch response.err {
 		// success! We have found a new primary
 		case nil:
@@ -1062,10 +1069,6 @@ func (c *Client) findNewPrimary(ctx context.Context, height int64, remove bool) 
 
 			// return the light block that new primary responded with
 			return response.lb, nil
-
-		// catch canceled contexts or deadlines
-		case context.Canceled, context.DeadlineExceeded:
-			return nil, response.err
 
 		// process benign errors by logging them only
 		case provider.ErrNoResponse, provider.ErrLightBlockNotFound, provider.ErrHeightTooHigh:

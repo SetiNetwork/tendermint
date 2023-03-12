@@ -1,7 +1,7 @@
-# Runs randomly generated E2E testnets nightly on v0.35.x.
+# Runs randomly generated E2E testnets nightly on the v0.35.x branch.
 
-# !! If you change something in this file, you probably want
-# to update the e2e-nightly-master workflow as well!
+# !! This file should be kept in sync with the e2e-nightly-master.yml file,
+# modulo changes to the version labels.
 
 name: e2e-nightly-35x
 on:
